@@ -1,10 +1,16 @@
 # C2C Elite 101 Python Chatbot Starter
 
-This chatbot was created by Jorge Luna - update
+# Introduction
 
-This project is a starter project that includes a dev [container (GitHub Codespace)](https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces/adding-a-dev-container-configuration/introduction-to-dev-containers) that is set up for a python
-development environment.
+This chatbot was created by *Charlie*
 
+## Usage
+
+Run this command to execute the application:
+
+`python filename.py`
+
+```
 The project is meant to be a starter for your chatbot project.
 
 To use this project do the following:
@@ -19,3 +25,5 @@ in the browser or in a local installation of vs code) for more info [go here](ht
 ![Screenshot](codespace_run_file.png)
 
 Example change
+
+new line
