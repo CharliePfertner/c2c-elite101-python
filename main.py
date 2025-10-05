@@ -62,17 +62,36 @@ time()
 myAge(age)
 
 
+
+time_until_delivery = None
+the_choice = None
 while True:
-    print("Here are the following options you can choose from:\n1. Placeholder 1 \n2. Placeholder 2\n3. Placeholder 3\n4. Placeholder 4 \n5. Exit the conversation.")
-    the_choice = int(input("Enter the number of your choice: "))
-    if the_choice == 1:
+    print("Here are the following options you can choose from:\n1. Re-Schedule Order\n2. Check Delivery Status\n3. Contact Information\n4. Placeholder 4 \n5. Exit the conversation.")
+    try:
+        the_choice = input("Enter the number of your choice: ")
+        if the_choice not in ['1','2','3','4','5', 'help']:
+            raise ValueError
+    except ValueError:
+        print("\nInvalid value. Please enter a number.\n")
+        continue
+    if the_choice == '1':
+        the_choice = 0
+        while time_until_delivery == None:
+            try:
+                time_until_delivery = int(input("\n In how many minutes do you want the food to be delivered?\n"))
+            except ValueError:
+                print("Invalid value. Please enter a number.")
+        the_choice = input(f"Okay, your order will be delivered in {time_until_delivery} minutes. Type 'help' if you need anything else.")
+
+    elif the_choice == '2':
         print("\nWhen there is something here, I will tell you the answer to the problem you selected.\n")
-    if the_choice == 2:
+    elif the_choice == '3':
         print("\nWhen there is something here, I will tell you the answer to the problem you selected.\n")
-    if the_choice == 3:
+    elif the_choice == '4':
         print("\nWhen there is something here, I will tell you the answer to the problem you selected.\n")
-    if the_choice == 4:
-        print("\nWhen there is something here, I will tell you the answer to the problem you selected.\n")
-    if the_choice == 5:
+    elif the_choice == '5':
         print("\nThank you for using the chatbot, "+name+". Have a great rest of your day!")
         exit()
+    elif the_choice == 'help':
+        print("Here are the following options you can choose from:\n1. Re-Schedule Order\n2. Check Delivery Status\n3. Contact Information\n4. Placeholder 4 \n5. Exit the conversation.")
+        the_choice = input("Enter the number of your choice: ")
