@@ -30,11 +30,16 @@ if __name__ == "__main__":
 from datetime import date, datetime
 from time import sleep as wait
 import random
-print("Welcome to the tech support chatbot!")
-name = input("Please enter your name: ")
-age = int(input("Hello "+ name + ", how old are you? "))
+import threading
+
 current_time = datetime.now()
 your_time = current_time.hour -5
+continuing_thread = True
+time_until_delivery_minutes = None
+time_until_delivery_seconds = None
+delivered = None
+seconds = 0
+minutes = 0
 
 def time():
     if your_time == 23 or your_time<=3:
@@ -59,20 +64,24 @@ def myAge(age):
         print("\nWow! Good job taking care of yourself and living. Welcome! How may I help you?\n")
     elif age >=120:
         print("\nI don't think anyone living is that age right now.. but whatever.\n")
-time()
 
+def counting():
+    global seconds
+    global minutes
+    while continuing_thread:
+        minutes = int(seconds/60)
+        seconds+=1
+        wait(1)
+        if minutes >= int(delivered):
+            minutes = int(delivered)
+
+print("Welcome to the tech support chatbot!")
+name = input("Please enter your name: ")
+age = int(input("Hello "+ name + ", how old are you? "))
+
+time()
 myAge(age)
 
-
-
-time_until_delivery = None
-the_choice = None
-progress = None
-count = 0
-ordering = False
-def counting():
-    global count
-    count+=0.01666666
 while True:
 
     print("Here are the following options you can choose from:\n1. Re-Schedule Order\n2. Check Delivery Status\n3. Contact Information\n4. Placeholder 4 \n5. Exit the conversation.")
@@ -83,53 +92,64 @@ while True:
     except ValueError:
         print("\nInvalid value. Please enter a number.\n")
         continue
-    if ordering:
-        counting()
     if the_choice == '1':
         the_choice = 0
-        while time_until_delivery == None:
+        while time_until_delivery_minutes == None and time_until_delivery_seconds == None:
             try:
                 cost_of_previous_order = float(input("\n What was the cost of your previous order?\n"))
             except ValueError:
                 print("Invalid value. Please enter a number.")
             try:
-                time_until_delivery = int(input("\n In how many minutes do you want the food to be delivered?\n"))
+                time_until_delivery_minutes = int(input("\nIn how many minutes do you want the food to be delivered?\n"))
             except ValueError:
                 print("Invalid value. Please enter a number.")
-        the_choice = input(f"Okay, your order will be delivered in {time_until_delivery} minutes. Type 'help' if you need anything else.")
+            try:
+                time_until_delivery_seconds = int(input("\nIn how many extra seconds do you want the food to be delivered?\n"))
+            except ValueError:
+                print("Invalid value. Please enter a number")
 
-        ordering = True
-        no_response = random.uniform(0,time_until_delivery*1/2)
-        picking_up = random.uniform(no_response, time_until_delivery*9/10)
-        delivering = random.uniform(picking_up, time_until_delivery*1.3)
-        delivered = random.uniform(delivering, time_until_delivery*1.5)
+        the_choice = input(f"Okay, your order will be delivered in {time_until_delivery_minutes} minute(s) and {time_until_delivery_seconds} second(s). Type 'help' if you need anything else. ")
+
+        total_seconds = (time_until_delivery_minutes*60) + time_until_delivery_seconds
+
+        response = int(random.uniform(0,(total_seconds)*1/2))
+        picking_up = int(random.uniform(response, (total_seconds)*9/10))
+        delivering = int(random.uniform(picking_up, (total_seconds)*1.3))
+        delivered = int(random.uniform(delivering, (total_seconds)*1.5))
+
+        count_thread = threading.Thread(target = counting)
+        count_thread.start()
 
     elif the_choice == '2':
-        if count >= no_response:
-            progress = "responded"
-        if count >= picking_up:
+        progress = "No Response"
+        if seconds >= response:
+            progress = "Responded"
+        if seconds >= picking_up:
             progress = "Picked Up"
-        if count >= delivering:
-            progress = "delivering"
-        if count >= delivering:
-            progress = "delivered"
-        print(progress)
-        if progress == "delivered":
-            if count < time_until_delivery:
+        if seconds >= delivering:
+            progress = "Delivering"
+        if seconds >= delivered:
+            progress = "Delivered"
+        if progress != "Delivered":
+            print(f"-------------------\nMinutes: {minutes}\nSeconds: {seconds%60}\nProgress: {progress}\n-------------------")
+        if progress == "Delivered":
+            print(f"-------------------\nMinutes: {minutes}\nSeconds: {delivered%60}\nProgress: {progress}\n")
+            continuing_thread = False
+            if total_seconds > delivered:
                 print(cost_of_previous_order)
-            elif count > time_until_delivery:
-                print(cost_of_previous_order+((count-time_until_delivery)/0.1666666))
+            if total_seconds < delivered:
+              print(f"Cost of the order: ${cost_of_previous_order-(delivered-total_seconds)/100}-------------------")
 
 
     elif the_choice == '3':
-        print("\nCall 555-485-0994 for further assistance.")
+        print("-------------------\nCall 555-485-0994 for further assistance.\n-------------------")
     elif the_choice == '4':
-        print("\nWhen there is something here, I will tell you the answer to the problem you selected.\n")
+        print("-------------------\nWhen there is something here, I will tell you the answer to the problem you selected.\n-------------------")
     elif the_choice == '5':
-        print("\nThank you for using the chatbot, "+name+". Have a great rest of your day!")
+        print("-------------------\nThank you for using the chatbot, "+name+". Have a great rest of your day!\n-------------------")
         exit()
     elif the_choice == 'help':
-        print("Here are the following options you can choose from:\n1. Re-Schedule Order\n2. Check Delivery Status\n3. Contact Information\n4. Placeholder 4 \n5. Exit the conversation.")
+        print("-------------------\nHere are the following options you can choose from:\n1. Re-Schedule Order\n2. Check Delivery Status\n3. Contact Information\n4. Placeholder 4 \n5. Exit the conversation.\n-------------------")
         the_choice = input("Enter the number of your choice: ")
 
 '''
